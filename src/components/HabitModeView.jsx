@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Flame } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { playCelebrationFanfare, playTapSound, triggerHaptic } from '../utils/audio';
 
 const INSIGHTS = [
-  "💡 Every 24h capital stays invested, loss probability drops",
-  "💡 Over 7 years, probability of negative SIP return is < 1%",
-  "💡 Unbroken SIPs beat 94% of active market timers",
-  "💡 Down market days give your SIP cheaper NAV purchase units"
+  "Insight: Every 24h capital stays invested, loss probability drops",
+  "Insight: Over 7 years, probability of negative SIP return is < 1%",
+  "Insight: Unbroken SIPs beat 94% of active market timers",
+  "Insight: Down market days give your SIP cheaper NAV purchase units"
 ];
 
 export default function HabitModeView({ isValueHidden }) {
@@ -25,8 +24,8 @@ export default function HabitModeView({ isValueHidden }) {
     playCelebrationFanfare();
     triggerHaptic([20, 40, 20]);
     confetti({
-      particleCount: 50,
-      spread: 50,
+      particleCount: 40,
+      spread: 45,
       origin: { y: 0.35 }
     });
   };
@@ -39,37 +38,35 @@ export default function HabitModeView({ isValueHidden }) {
 
   return (
     <div className="h-[195px] flex flex-col justify-between select-none">
-      {/* 1. Day 47 Compounding Counter Hero Row - Exact height matching ₹7,084 */}
+      {/* 1. Day 47 Compounding Counter Hero Row - Clean Groww Typography */}
       <div className="h-8 flex items-center justify-between">
         <div 
           onClick={handleStreakClick}
-          className="flex items-center space-x-1.5 cursor-pointer active:scale-95 transition-transform"
-          title="Tap to celebrate streak!"
+          className="flex items-center cursor-pointer active:scale-98 transition-transform"
+          title="Tap to celebrate streak"
         >
           <span className="text-[28px] font-bold text-[#1F2937] tracking-tight leading-none font-sans">
             Day 47
           </span>
-          <span className="text-xl animate-flame">🔥</span>
         </div>
 
-        {/* Live Micro-accrual Counter */}
+        {/* Live Accrual Counter */}
         <div className="text-right">
-          <span className="text-[12.5px] font-semibold text-[#00D09C] inline-flex items-center">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00D09C] mr-1.5 animate-pulse"></span>
+          <span className="text-[13px] font-semibold text-[#00D09C]">
             {isValueHidden ? '••••••' : `+₹${liveAccrued} today`}
           </span>
         </div>
       </div>
 
-      {/* 2. Exact Groww Dashed Divider Line */}
+      {/* 2. Groww Dashed Divider Line */}
       <div className="w-full border-t border-dashed border-[#E5E7EB] my-2.5" />
 
-      {/* 3. 4-Row Metric Grid - Exact match with Holdings height */}
+      {/* 3. 4-Row Metric Grid - Strictly Groww Design System (No Emojis) */}
       <div className="space-y-2 text-[13.5px]">
         {/* Row 1: Streak Status */}
         <div className="flex items-center justify-between h-5">
           <span className="text-[#6B7280] font-normal">Compounding Streak</span>
-          <span className="text-[#00897B] font-medium tracking-tight">
+          <span className="text-[#1F2937] font-medium tracking-tight">
             47 Days Unbroken
           </span>
         </div>
@@ -81,34 +78,33 @@ export default function HabitModeView({ isValueHidden }) {
             <span className="text-[#1F2937] font-medium tracking-tight">
               {isValueHidden ? '••••••' : '14 Days (₹2,500 on 1st)'}
             </span>
-            <span className="text-[9.5px] font-bold bg-[#E6F9F5] text-[#00897B] px-1.5 py-0.2 rounded-sm">
-              53%
+            <span className="text-[10px] font-semibold text-[#6B7280]">
+              (53%)
             </span>
           </div>
         </div>
 
-        {/* Row 3: SIP Consistency (Universal for all investors, beginner & multi-year) */}
+        {/* Row 3: SIP Consistency */}
         <div className="flex items-center justify-between h-5">
           <span className="text-[#6B7280] font-normal">SIP Consistency</span>
-          <div className="flex items-center space-x-1.5">
-            <span className="text-[#00897B] font-semibold">100%</span>
-            <span className="text-[#1F2937] font-medium tracking-tight">On-Time Debits</span>
-          </div>
+          <span className="text-[#00D09C] font-semibold tracking-tight">
+            100% On-Time Debits
+          </span>
         </div>
 
-        {/* Row 4: Mandate Health Indicator */}
+        {/* Row 4: Mandate Health */}
         <div className="flex items-center justify-between h-5">
           <span className="text-[#6B7280] font-normal">Mandate Health</span>
-          <span className="text-[#00D09C] font-medium tracking-tight flex items-center gap-1">
-            <span>● Autopay Active & Verified</span>
+          <span className="text-[#00D09C] font-medium tracking-tight">
+            Autopay Active & Verified
           </span>
         </div>
       </div>
 
-      {/* 4. Reassurance Micro-Copy Banner - Exact match with Holdings status line */}
+      {/* 4. Reassurance Insight Banner (Clean Typography, No Lightbulb) */}
       <div 
         onClick={nextInsight}
-        className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-[#44475B] cursor-pointer hover:text-black transition-colors h-5"
+        className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-[#6B7280] cursor-pointer hover:text-[#1F2937] transition-colors h-5"
         title="Tap to cycle tips"
       >
         <span className="truncate pr-2 font-normal">{INSIGHTS[insightIndex]}</span>
