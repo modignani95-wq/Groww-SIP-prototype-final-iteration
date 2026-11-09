@@ -66,14 +66,16 @@ export default function App() {
       {/* 4. Main Scrollable View with Pull-to-Refresh */}
       <PullToRefresh onRefresh={handleRefresh}>
         {activeBottomTab !== 'mf' ? (
-          <OtherTabViews
-            tab={activeBottomTab}
-            onBackToMf={() => setActiveBottomTab('mf')}
-          />
+          <div className="pb-20">
+            <OtherTabViews
+              tab={activeBottomTab}
+              onBackToMf={() => setActiveBottomTab('mf')}
+            />
+          </div>
         ) : (
-          <>
+          <div className="pb-20">
             {activeSubTab === 'Dashboard' && (
-              <main className="flex-1 pb-4">
+              <main className="flex-1">
                 {/* Primary Hero Dual-View Interactive Card: Habit Mode vs Holdings Mode */}
                 <HeroCard
                   onOpenXirr={() => setIsXirrOpen(true)}
@@ -99,11 +101,11 @@ export default function App() {
             {activeSubTab === 'Watchlist' && (
               <WatchlistView />
             )}
-          </>
+          </div>
         )}
       </PullToRefresh>
 
-      {/* 5. Fixed Bottom Navigation Bar (Stocks, F&O, Mutual Funds [Active], Loans) */}
+      {/* 5. Fixed Static Bottom Navigation Bar (Stocks, F&O, Mutual Funds [Active], Loans) */}
       <BottomNavBar
         activeBottomTab={activeBottomTab}
         onSelectBottomTab={(tabId) => setActiveBottomTab(tabId)}
