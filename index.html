@@ -18,13 +18,16 @@
     
     <title>Groww Mutual Funds & Habit Engine</title>
   </head>
-  <body class="bg-slate-100 text-[#1F2937] antialiased">
+  <body class="bg-[#F4F6F8] text-[#1F2937] antialiased m-0 p-0">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
+      // Clear stale service worker caches if updating to ensure no white screen
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW reg error:', err));
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for (let reg of registrations) {
+            reg.update();
+          }
         });
       }
     </script>
