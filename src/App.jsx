@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PhoneFrame from './components/PhoneFrame';
 import TopStatusBar from './components/TopStatusBar';
 import GrowwHeader from './components/GrowwHeader';
@@ -14,16 +14,24 @@ import SearchModal from './components/SearchModal';
 import ProfileDrawer from './components/ProfileDrawer';
 import NotificationsModal from './components/NotificationsModal';
 import WhyHabitModal from './components/WhyHabitModal';
+import DisciplineHorizonSheet from './components/DisciplineHorizonSheet';
+import BankBalanceModal from './components/BankBalanceModal';
+import AiSimulatorToolbar from './components/AiSimulatorToolbar';
 import ExploreView from './components/ExploreView';
 import SipsView from './components/SipsView';
 import WatchlistView from './components/WatchlistView';
 import OtherTabViews from './components/OtherTabViews';
 import PullToRefresh from './components/PullToRefresh';
+import { INITIAL_CONTEXT, evaluateBehaviorState } from './services/aiBehaviorEngine';
 
 export default function App() {
   const [activeSubTab, setActiveSubTab] = useState('Dashboard');
   const [activeBottomTab, setActiveBottomTab] = useState('mf');
   const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // AI Behavioral Engine Context & State
+  const [aiContext, setAiContext] = useState(INITIAL_CONTEXT);
+  const toggleHistoryRef = useRef([]);
 
   // Modals & Drawers state
   const [isXirrOpen, setIsXirrOpen] = useState(false);
@@ -33,7 +41,38 @@ export default function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isWhyHabitOpen, setIsWhyHabitOpen] = useState(false);
+  const [isHorizonOpen, setIsHorizonOpen] = useState(false);
+  const [isBalanceCheckOpen, setIsBalanceCheckOpen] = useState(false);
   const [selectedFund, setSelectedFund] = useState(null);
+
+  // Evaluate AI state in real-time
+  const aiState = evaluateBehaviorState(aiContext);
+
+  // Track rapid toggles for Panic Detection
+  const handleRecordToggle = (mode) => {
+    const now = Date.now();
+    toggleHistoryRef.current = [...toggleHistoryRef.current.filter((t) => now - t < 30000), now];
+    const toggleCount = toggleHistoryRef.current.length;
+
+    setAiContext((prev) => ({
+      ...prev,
+      viewState: mode === 'holdings' ? 'HOLDINGS' : 'HABIT',
+      rapidToggleCount: toggleCount
+    }));
+  };
+
+  const handleResetPanic = () => {
+    toggleHistoryRef.current = [];
+    setAiContext((prev) => ({
+      ...prev,
+      rapidToggleCount: 0,
+      viewState: 'HABIT'
+    }));
+  };
+
+  const handleUpdateAiContext = (updates) => {
+    setAiContext((prev) => ({ ...prev, ...updates }));
+  };
 
   const handleRefresh = async () => {
     return new Promise((resolve) => setTimeout(resolve, 800));
@@ -66,20 +105,25 @@ export default function App() {
       {/* 4. Main Scrollable View with Pull-to-Refresh */}
       <PullToRefresh onRefresh={handleRefresh}>
         {activeBottomTab !== 'mf' ? (
-          <div className="pb-20">
+          <div className="pb-28">
             <OtherTabViews
               tab={activeBottomTab}
               onBackToMf={() => setActiveBottomTab('mf')}
             />
           </div>
         ) : (
-          <div className="pb-20">
+          <div className="pb-28">
             {activeSubTab === 'Dashboard' && (
               <main className="flex-1">
-                {/* Primary Hero Dual-View Interactive Card: Habit Mode vs Holdings Mode */}
+                {/* Primary Hero Dual-View Interactive Card with AI Behavioral Engine */}
                 <HeroCard
                   onOpenXirr={() => setIsXirrOpen(true)}
                   onOpenAnalytics={() => setIsAnalyticsOpen(true)}
+                  aiState={aiState}
+                  context={aiContext}
+                  onOpenHorizon={() => setIsHorizonOpen(true)}
+                  onOpenBalanceCheck={() => setIsBalanceCheckOpen(true)}
+                  onRecordToggle={handleRecordToggle}
                 />
 
                 {/* Fund List Section (Filter/Sort, Active SIP Funds, Import CTA, Disclaimer) */}
@@ -105,6 +149,16 @@ export default function App() {
         )}
       </PullToRefresh>
 
+      {/* Floating AI Behavioral Engine Live Simulator Bar (For User Testing & Demo) */}
+      <AiSimulatorToolbar
+        context={aiContext}
+        onUpdateContext={handleUpdateAiContext}
+        onTriggerPanic={() => {
+          handleUpdateAiContext({ rapidToggleCount: 4 });
+          setIsHorizonOpen(true);
+        }}
+      />
+
       {/* 5. Fixed Static Bottom Navigation Bar (Stocks, F&O, Mutual Funds [Active], Loans) */}
       <BottomNavBar
         activeBottomTab={activeBottomTab}
@@ -112,6 +166,20 @@ export default function App() {
       />
 
       {/* Interactive Modals and Drawers */}
+      <DisciplineHorizonSheet
+        isOpen={isHorizonOpen}
+        onClose={() => setIsHorizonOpen(false)}
+        onResetToHabit={handleResetPanic}
+        streakDays={aiContext.streakDays}
+      />
+
+      <BankBalanceModal
+        isOpen={isBalanceCheckOpen}
+        onClose={() => setIsBalanceCheckOpen(false)}
+        daysLeft={aiContext.daysToNextDebit}
+        amount="₹2,500"
+      />
+
       <FundDetailsDrawer
         fund={selectedFund}
         isOpen={Boolean(selectedFund)}

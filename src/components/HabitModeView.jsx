@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { playCelebrationFanfare, playTapSound, triggerHaptic } from '../utils/audio';
 
-const INSIGHTS = [
-  "Insight: Every 24h capital stays invested, loss probability drops",
-  "Insight: Over 7 years, probability of negative SIP return is < 1%",
-  "Insight: Unbroken SIPs beat 94% of active market timers",
-  "Insight: Down market days give your SIP cheaper NAV purchase units"
-];
-
-export default function HabitModeView({ isValueHidden }) {
-  const [insightIndex, setInsightIndex] = useState(0);
+export default function HabitModeView({ 
+  isValueHidden, 
+  aiState, 
+  context, 
+  onOpenHorizon,
+  onOpenBalanceCheck 
+}) {
   const [liveAccrued, setLiveAccrued] = useState(1.48);
 
   useEffect(() => {
@@ -31,11 +29,10 @@ export default function HabitModeView({ isValueHidden }) {
     });
   };
 
-  const nextInsight = () => {
-    playTapSound();
-    triggerHaptic(10);
-    setInsightIndex((prev) => (prev + 1) % INSIGHTS.length);
-  };
+  const daysLeft = context?.daysToNextDebit ?? 14;
+  const isApproaching = daysLeft <= 3;
+  const copyText = aiState?.copy || "Every 24 hours your capital stays invested, your probability of negative return drops.";
+  const aiBadge = aiState?.badge || "Momentum Active";
 
   return (
     <div className="h-[195px] flex flex-col justify-between select-none">
@@ -47,14 +44,17 @@ export default function HabitModeView({ isValueHidden }) {
           title="Tap to celebrate streak"
         >
           <span className="text-[28px] font-bold text-[#1F2937] tracking-tight leading-none font-sans">
-            Day 47
+            Day {context?.streakDays || 47}
           </span>
           {/* Flat 2D Vector Flame Icon */}
           <Flame size={20} className="text-[#FF7A00] fill-[#FF7A00] shrink-0 stroke-[1.5]" />
         </div>
 
-        {/* Live Accrual Counter */}
-        <div className="text-right">
+        {/* Live Accrual Counter & AI State Badge */}
+        <div className="text-right flex items-center space-x-1.5">
+          <span className="text-[10px] font-semibold text-[#00897B] bg-[#E6F9F5] px-1.5 py-0.5 rounded-sm">
+            {aiBadge}
+          </span>
           <span className="text-[13px] font-semibold text-[#00D09C]">
             {isValueHidden ? '••••••' : `+₹${liveAccrued} today`}
           </span>
@@ -70,7 +70,7 @@ export default function HabitModeView({ isValueHidden }) {
         <div className="flex items-center justify-between h-5">
           <span className="text-[#6B7280] font-normal">Compounding Streak</span>
           <span className="text-[#1F2937] font-medium tracking-tight">
-            47 Days Unbroken
+            {context?.streakDays || 47} Days Unbroken
           </span>
         </div>
 
@@ -79,10 +79,10 @@ export default function HabitModeView({ isValueHidden }) {
           <span className="text-[#6B7280] font-normal">Next SIP Debit</span>
           <div className="flex items-center space-x-1.5">
             <span className="text-[#1F2937] font-medium tracking-tight">
-              {isValueHidden ? '••••••' : '14 Days (₹2,500 on 1st)'}
+              {isValueHidden ? '••••••' : `${daysLeft} Days (₹2,500 on 1st)`}
             </span>
             <span className="text-[10px] font-semibold text-[#6B7280]">
-              (53%)
+              ({Math.round(((30 - daysLeft) / 30) * 100)}%)
             </span>
           </div>
         </div>
@@ -95,24 +95,44 @@ export default function HabitModeView({ isValueHidden }) {
           </span>
         </div>
 
-        {/* Row 4: Mandate Health */}
+        {/* Row 4: Mandate Health with Cash-Flow Sentinel Nudge */}
         <div className="flex items-center justify-between h-5">
           <span className="text-[#6B7280] font-normal">Mandate Health</span>
-          <span className="text-[#00D09C] font-medium tracking-tight">
-            Autopay Active & Verified
-          </span>
+          {isApproaching ? (
+            <button
+              onClick={() => {
+                playTapSound();
+                if (onOpenBalanceCheck) onOpenBalanceCheck();
+              }}
+              className="text-[#00897B] font-semibold tracking-tight underline hover:text-[#00D09C] flex items-center space-x-1"
+            >
+              <span>Autopay Ready • Verify Balance</span>
+            </button>
+          ) : (
+            <span className="text-[#00D09C] font-medium tracking-tight">
+              Autopay Active & Verified
+            </span>
+          )}
         </div>
       </div>
 
-      {/* 4. Reassurance Insight Banner (Clean Typography) */}
+      {/* 4. Dynamic AI Reassurance Micro-Copy Banner */}
       <div 
-        onClick={nextInsight}
-        className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-[#6B7280] cursor-pointer hover:text-[#1F2937] transition-colors h-5"
-        title="Tap to cycle tips"
+        onClick={() => {
+          playTapSound();
+          if (onOpenHorizon) onOpenHorizon();
+        }}
+        className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-[#44475B] cursor-pointer hover:text-[#1F2937] transition-colors h-5 group"
+        title="Tap to see Groww Investor Achievement Benchmarks"
       >
-        <span className="truncate pr-2 font-normal">{INSIGHTS[insightIndex]}</span>
-        <span className="text-[10px] text-[#9CA3AF] shrink-0 font-medium">
-          {insightIndex + 1}/{INSIGHTS.length}
+        <div className="flex items-center space-x-1 truncate pr-2">
+          <Sparkles size={11} className="text-[#00D09C] shrink-0" />
+          <span className="truncate font-normal group-hover:text-black">
+            {copyText}
+          </span>
+        </div>
+        <span className="text-[10px] text-[#00897B] shrink-0 font-medium group-hover:underline">
+          Peer Data &gt;
         </span>
       </div>
     </div>
