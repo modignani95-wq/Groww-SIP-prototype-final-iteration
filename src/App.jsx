@@ -16,7 +16,6 @@ import NotificationsModal from './components/NotificationsModal';
 import WhyHabitModal from './components/WhyHabitModal';
 import DisciplineHorizonSheet from './components/DisciplineHorizonSheet';
 import BankBalanceModal from './components/BankBalanceModal';
-import AiSimulatorToolbar from './components/AiSimulatorToolbar';
 import ExploreView from './components/ExploreView';
 import SipsView from './components/SipsView';
 import WatchlistView from './components/WatchlistView';
@@ -148,16 +147,6 @@ export default function App() {
           </div>
         )}
       </PullToRefresh>
-
-      {/* Floating AI Behavioral Engine Live Simulator Bar (For User Testing & Demo) */}
-      <AiSimulatorToolbar
-        context={aiContext}
-        onUpdateContext={handleUpdateAiContext}
-        onTriggerPanic={() => {
-          handleUpdateAiContext({ rapidToggleCount: 4 });
-          setIsHorizonOpen(true);
-        }}
-      />
 
       {/* 5. Fixed Static Bottom Navigation Bar (Stocks, F&O, Mutual Funds [Active], Loans) */}
       <BottomNavBar
