@@ -1,0 +1,19 @@
+{
+  "name": "Groww Mutual Funds & Habit Engine",
+  "short_name": "Groww MF",
+  "description": "Groww Mutual Funds Dashboard with innovative Habit & Momentum Engine for First-Time Investors",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#00D09C",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/groww-icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
