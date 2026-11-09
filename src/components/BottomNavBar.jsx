@@ -9,7 +9,7 @@ export default function BottomNavBar({ activeBottomTab, onSelectBottomTab }) {
   };
 
   return (
-    <nav className="w-full bg-white border-t border-[#ECEEF0] px-3 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] flex items-center justify-around select-none z-20 shrink-0">
+    <nav className="shrink-0 w-full bg-white border-t border-[#ECEEF0] px-3 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex items-center justify-around select-none z-30">
       {/* 1. Stocks */}
       <button
         onClick={() => handleClick('stocks')}

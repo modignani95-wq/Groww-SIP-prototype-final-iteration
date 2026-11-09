@@ -9,9 +9,9 @@ export default function PhoneFrame({
   setSoundEnabled 
 }) {
   return (
-    <div className="min-h-screen w-full bg-[#F4F6F8] flex flex-col items-center justify-start sm:py-6 font-sans antialiased">
+    <div className="h-full w-full bg-[#F4F6F8] flex flex-col items-center justify-center sm:py-6 font-sans antialiased overflow-hidden">
       {/* Desktop Helper Toolbar (Hidden on actual mobile screens) */}
-      <div className="hidden sm:flex items-center justify-between w-full max-w-[420px] mb-2 px-3 text-xs text-[#6B7280]">
+      <div className="hidden sm:flex items-center justify-between w-full max-w-[420px] mb-2 px-3 text-xs text-[#6B7280] shrink-0">
         <div className="flex items-center space-x-1.5 font-medium">
           <span className="w-2 h-2 rounded-full bg-[#00D09C]"></span>
           <span>Groww PWA Mode</span>
@@ -42,8 +42,8 @@ export default function PhoneFrame({
         </div>
       </div>
 
-      {/* Screen Container: Fixed mobile width on desktop, 100% full-screen on mobile devices */}
-      <div className="w-full max-w-[420px] min-h-screen sm:min-h-[820px] sm:max-h-[92vh] sm:rounded-2xl bg-white sm:border sm:border-[#ECEEF0] sm:shadow-md flex flex-col overflow-hidden relative">
+      {/* Screen Container: 100dvh on mobile, fixed height on desktop */}
+      <div className="w-full max-w-[420px] h-[100dvh] sm:h-[844px] sm:max-h-[92vh] sm:rounded-2xl bg-white sm:border sm:border-[#ECEEF0] sm:shadow-md flex flex-col overflow-hidden relative">
         {children}
       </div>
     </div>
